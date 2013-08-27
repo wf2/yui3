@@ -20,9 +20,9 @@ ChartBase.ATTRS = {
         valueFn: function()
         {
             var defDataProvider = [];
-            if(!this._seriesKeysExplicitlySet)
+            if(!this._wereSeriesKeysExplicitlySet())
             {
-                this._seriesKeys = this._buildSeriesKeys(defDataProvider);
+                this.set("seriesKeys", this._buildSeriesKeys(defDataProvider), {src: "internal"});
             }
             return defDataProvider;
         },
@@ -30,9 +30,9 @@ ChartBase.ATTRS = {
         setter: function(val)
         {
             var dataProvider = this._setDataValues(val);
-            if(!this._seriesKeysExplicitlySet)
+            if(!this._wereSeriesKeysExplicitlySet())
             {
-                this._seriesKeys = this._buildSeriesKeys(dataProvider);
+                this.set("seriesKeys", this._buildSeriesKeys(dataProvider), {src: "internal"});
             }
             return dataProvider;
         }
@@ -47,15 +47,19 @@ ChartBase.ATTRS = {
      * @type Array
      */
     seriesKeys: {
-        getter: function()
-        {
-            return this._seriesKeys;
-        },
+        lazyAdd: false,
 
         setter: function(val)
         {
-            this._seriesKeysExplicitlySet = true;
-            this._seriesKeys = val;
+            var opts = arguments[2];
+            if(!val || (opts && opts.src && opts.src === "internal"))
+            {
+                this._seriesKeysExplicitlySet = false;
+            }
+            else
+            {
+                this._seriesKeysExplicitlySet = true;
+            }
             return val;
         }
     },
@@ -253,6 +257,22 @@ ChartBase.ATTRS = {
 };
 
 ChartBase.prototype = {
+
+    /**
+     * Utility method to determine if `seriesKeys` was explicitly provided
+     * (for example during construction, or set by the user), as opposed to
+     * being derived from the dataProvider for example.
+     *
+     * @method _wereSeriesKeysExplicitlySet
+     * @private
+     * @return boolean true if the `seriesKeys` attribute was explicitly set.
+     */
+    _wereSeriesKeysExplicitlySet : function()
+    {
+        var seriesKeys = this.get("seriesKeys");
+        return seriesKeys && this._seriesKeysExplicitlySet;
+    },
+
     /**
      * Handles groupMarkers change event.
      *
@@ -299,7 +319,7 @@ ChartBase.prototype = {
             chart:this,
             groupMarkers: this.get("groupMarkers")
         });
-        graph.after("chartRendered", Y.bind(function(e) {
+        graph.after("chartRendered", Y.bind(function() {
             this.fire("chartRendered");
         }, this));
         return graph;
@@ -600,7 +620,7 @@ ChartBase.prototype = {
                 this._liveRegion.appendChild(DOCUMENT.createTextNode(msg));
             }
         }, this), this.get("contentBox"));
-        if(interactionType == "marker")
+        if(interactionType === "marker")
         {
             //if touch capabilities, toggle tooltip on touchend. otherwise, the tooltip attribute's hideEvent/showEvent types.
             hideEvent = tt.hideEvent;
@@ -632,7 +652,7 @@ ChartBase.prototype = {
                 Y.delegate("mousemove", Y.bind(this._positionTooltip, this), cb, markerClassName);
             }
         }
-        else if(interactionType == "planar")
+        else if(interactionType === "planar")
         {
             if(isTouch)
             {
@@ -660,7 +680,7 @@ ChartBase.prototype = {
                     tt.markerEventHandler.apply(this, [e]);
                 }
             }, this));
-            if(hideEvent && showEvent && hideEvent == showEvent)
+            if(hideEvent && showEvent && hideEvent === showEvent)
             {
                 this.on(interactionType + "Event:" + hideEvent, this.toggleTooltip);
             }
@@ -708,11 +728,11 @@ ChartBase.prototype = {
             pageY = isTouch ? e.changedTouches[0].pageY : e.pageY,
             x = pageX - cb.getX(),
             y = pageY - cb.getY();
-        if(type == "mouseenter")
+        if(type === "mouseenter")
         {
             type = "mouseover";
         }
-        else if(type == "mouseleave")
+        else if(type === "mouseleave")
         {
             type = "mouseout";
         }
@@ -857,7 +877,7 @@ ChartBase.prototype = {
                     axis = axes[i];
                     if(axis instanceof Y.Axis)
                     {
-                        if(axis.get("position") != "none")
+                        if(axis.get("position") !== "none")
                         {
                             this._addToAxesRenderQueue(axis);
                         }
@@ -1091,7 +1111,7 @@ ChartBase.prototype = {
      *  @return {String | HTML}
      * @private
      */
-    _planarLabelFunction: function(categoryAxis, valueItems, index, seriesArray, seriesIndex)
+    _planarLabelFunction: function(categoryAxis, valueItems, index, seriesArray)
     {
         var msg = DOCUMENT.createElement("div"),
             valueItem,
@@ -1103,7 +1123,10 @@ ChartBase.prototype = {
             series;
         if(categoryAxis)
         {
-            categoryValue = categoryAxis.get("labelFunction").apply(this, [categoryAxis.getKeyValueAt(this.get("categoryKey"), index), categoryAxis.get("labelFormat")]);
+            categoryValue = categoryAxis.get("labelFunction").apply(
+                this,
+                [categoryAxis.getKeyValueAt(this.get("categoryKey"), index), categoryAxis.get("labelFormat")]
+            );
             if(!Y_Lang.isObject(categoryValue))
             {
                 categoryValue = DOCUMENT.createTextNode(categoryValue);
@@ -1118,7 +1141,10 @@ ChartBase.prototype = {
             {
                 valueItem = valueItems[i];
                 axis = valueItem.axis;
-                seriesValue =  axis.get("labelFunction").apply(this, [axis.getKeyValueAt(valueItem.key, index), axis.get("labelFormat")]);
+                seriesValue =  axis.get("labelFunction").apply(
+                    this,
+                    [axis.getKeyValueAt(valueItem.key, index), axis.get("labelFormat")]
+                );
                 msg.appendChild(DOCUMENT.createElement("br"));
                 msg.appendChild(DOCUMENT.createTextNode(valueItem.displayName));
                 msg.appendChild(DOCUMENT.createTextNode(": "));
@@ -1150,17 +1176,20 @@ ChartBase.prototype = {
      *      <dt>key</dt><dd>The key for the series.</dd>
      *      <dt>value</dt><dd>The value for the series item.</dd>
      *  </dl>
-     * @param {Number} itemIndex The index of the item within the series.
-     * @param {CartesianSeries} series The `CartesianSeries` instance of the item.
-     * @param {Number} seriesIndex The index of the series in the `seriesCollection`.
      * @return {String | HTML}
      * @private
      */
-    _tooltipLabelFunction: function(categoryItem, valueItem, itemIndex, series, seriesIndex)
+    _tooltipLabelFunction: function(categoryItem, valueItem)
     {
         var msg = DOCUMENT.createElement("div"),
-            categoryValue = categoryItem.axis.get("labelFunction").apply(this, [categoryItem.value, categoryItem.axis.get("labelFormat")]),
-            seriesValue = valueItem.axis.get("labelFunction").apply(this, [valueItem.value, valueItem.axis.get("labelFormat")]);
+            categoryValue = categoryItem.axis.get("labelFunction").apply(
+                this,
+                [categoryItem.value, categoryItem.axis.get("labelFormat")]
+            ),
+            seriesValue = valueItem.axis.get("labelFunction").apply(
+                this,
+                [valueItem.value, valueItem.axis.get("labelFormat")]
+            );
         msg.appendChild(DOCUMENT.createTextNode(categoryItem.displayName));
         msg.appendChild(DOCUMENT.createTextNode(": "));
         if(!Y_Lang.isObject(categoryValue))
@@ -1186,7 +1215,7 @@ ChartBase.prototype = {
      * @param {Object} e Event object.
      * @private
      */
-    _tooltipChangeHandler: function(e)
+    _tooltipChangeHandler: function()
     {
         if(this.get("tooltip"))
         {
@@ -1280,7 +1309,7 @@ ChartBase.prototype = {
         allKeys = this._getAllKeys(dataProvider);
         for(i in allKeys)
         {
-            if(allKeys.hasOwnProperty(i) && i != catKey)
+            if(allKeys.hasOwnProperty(i) && i !== catKey)
             {
                 keys.push(i);
             }

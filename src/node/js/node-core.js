@@ -205,7 +205,7 @@ Y_Node.addMethod = function(name, fn, context) {
             }
             args.unshift(node._node);
 
-            ret = fn.apply(node, args);
+            ret = fn.apply(context || node, args);
 
             if (ret) { // scrub truthy
                 ret = Y_Node.scrubVal(ret, node);
@@ -634,10 +634,15 @@ Y.mix(Y_Node.prototype, {
      * @return {NodeList} A NodeList instance for the matching HTMLCollection/Array.
      */
     all: function(selector) {
-        var nodelist = Y.all(Y.Selector.query(selector, this._node));
-        nodelist._query = selector;
-        nodelist._queryRoot = this._node;
-        return nodelist;
+        var nodelist;
+        
+        if (this._node) {
+            nodelist = Y.all(Y.Selector.query(selector, this._node));
+            nodelist._query = selector;
+            nodelist._queryRoot = this._node;
+        }
+
+        return nodelist || Y.all([]);
     },
 
     // TODO: allow fn test

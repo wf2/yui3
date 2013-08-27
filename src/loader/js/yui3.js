@@ -259,7 +259,9 @@ Y.mix(YUI.Env[Y.version].modules, {
         ],
         "lang": [
             "en",
-            "es"
+            "es",
+            "hu",
+            "it"
         ],
         "requires": [
             "autocomplete-base",
@@ -481,20 +483,6 @@ Y.mix(YUI.Env[Y.version].modules, {
         ]
     },
     "calendar": {
-        "lang": [
-            "de",
-            "en",
-            "es",
-            "es-AR",
-            "fr",
-            "it",
-            "ja",
-            "nb-NO",
-            "nl",
-            "pt-BR",
-            "ru",
-            "zh-HANT-TW"
-        ],
         "requires": [
             "calendar-base",
             "calendarnavigator"
@@ -508,12 +496,17 @@ Y.mix(YUI.Env[Y.version].modules, {
             "es",
             "es-AR",
             "fr",
+            "hu",
             "it",
             "ja",
             "nb-NO",
             "nl",
             "pt-BR",
             "ru",
+            "zh-Hans",
+            "zh-Hans-CN",
+            "zh-Hant",
+            "zh-Hant-HK",
             "zh-HANT-TW"
         ],
         "requires": [
@@ -621,6 +614,8 @@ Y.mix(YUI.Env[Y.version].modules, {
         "lang": [
             "en",
             "es",
+            "hu",
+            "it",
             "ja"
         ],
         "requires": [
@@ -684,22 +679,19 @@ Y.mix(YUI.Env[Y.version].modules, {
     },
     "cssgrids": {
         "optional": [
-            "cssreset",
-            "cssfonts"
+            "cssnormalize"
         ],
         "type": "css"
     },
     "cssgrids-base": {
         "optional": [
-            "cssreset",
-            "cssfonts"
+            "cssnormalize"
         ],
         "type": "css"
     },
     "cssgrids-responsive": {
         "optional": [
-            "cssreset",
-            "cssfonts"
+            "cssnormalize"
         ],
         "requires": [
             "cssgrids",
@@ -709,8 +701,7 @@ Y.mix(YUI.Env[Y.version].modules, {
     },
     "cssgrids-units": {
         "optional": [
-            "cssreset",
-            "cssfonts"
+            "cssnormalize"
         ],
         "requires": [
             "cssgrids-base"
@@ -892,6 +883,12 @@ Y.mix(YUI.Env[Y.version].modules, {
             "datasource-local"
         ]
     },
+    "datatable-foot": {
+        "requires": [
+            "datatable-core",
+            "view"
+        ]
+    },
     "datatable-formatters": {
         "requires": [
             "datatable-body",
@@ -911,7 +908,9 @@ Y.mix(YUI.Env[Y.version].modules, {
         "lang": [
             "en",
             "fr",
-            "es"
+            "es",
+            "hu",
+            "it"
         ],
         "requires": [
             "datatable-base"
@@ -921,6 +920,24 @@ Y.mix(YUI.Env[Y.version].modules, {
     "datatable-mutable": {
         "requires": [
             "datatable-base"
+        ]
+    },
+    "datatable-paginator": {
+        "lang": [
+            "en"
+        ],
+        "requires": [
+            "model",
+            "view",
+            "paginator-core",
+            "datatable-foot",
+            "datatable-paginator-templates"
+        ],
+        "skinnable": true
+    },
+    "datatable-paginator-templates": {
+        "requires": [
+            "template"
         ]
     },
     "datatable-scroll": {
@@ -935,7 +952,8 @@ Y.mix(YUI.Env[Y.version].modules, {
         "lang": [
             "en",
             "fr",
-            "es"
+            "es",
+            "hu"
         ],
         "requires": [
             "datatable-base"
@@ -1011,6 +1029,7 @@ Y.mix(YUI.Env[Y.version].modules, {
             "fr-FR",
             "hi",
             "hi-IN",
+            "hu",
             "id",
             "id-ID",
             "it",
@@ -1165,7 +1184,8 @@ Y.mix(YUI.Env[Y.version].modules, {
     "dial": {
         "lang": [
             "en",
-            "es"
+            "es",
+            "hu"
         ],
         "requires": [
             "widget",
@@ -1211,7 +1231,8 @@ Y.mix(YUI.Env[Y.version].modules, {
     },
     "dom-style": {
         "requires": [
-            "dom-base"
+            "dom-base",
+            "color-base"
         ]
     },
     "dom-style-ie": {
@@ -1936,7 +1957,8 @@ Y.mix(YUI.Env[Y.version].modules, {
         "requires": [
             "event-base",
             "node-core",
-            "dom-base"
+            "dom-base",
+            "dom-style"
         ]
     },
     "node-core": {
@@ -2016,11 +2038,12 @@ Y.mix(YUI.Env[Y.version].modules, {
     },
     "node-scroll-info": {
         "requires": [
+            "array-extras",
             "base-build",
-            "dom-screen",
             "event-resize",
             "node-pluginhost",
-            "plugin"
+            "plugin",
+            "selector"
         ]
     },
     "node-style": {
@@ -2044,6 +2067,21 @@ Y.mix(YUI.Env[Y.version].modules, {
             "widget-position-constrain"
         ],
         "skinnable": true
+    },
+    "paginator": {
+        "requires": [
+            "paginator-core"
+        ]
+    },
+    "paginator-core": {
+        "requires": [
+            "base"
+        ]
+    },
+    "paginator-url": {
+        "requires": [
+            "paginator"
+        ]
     },
     "panel": {
         "requires": [
@@ -2110,11 +2148,6 @@ Y.mix(YUI.Env[Y.version].modules, {
     "pluginhost-config": {
         "requires": [
             "pluginhost-base"
-        ]
-    },
-    "profiler": {
-        "requires": [
-            "yui-base"
         ]
     },
     "promise": {
@@ -2559,8 +2592,7 @@ Y.mix(YUI.Env[Y.version].modules, {
     "tabview-base": {
         "requires": [
             "node-event-delegate",
-            "classnamemanager",
-            "skin-sam-tabview"
+            "classnamemanager"
         ]
     },
     "tabview-plugin": {
@@ -2682,6 +2714,11 @@ Y.mix(YUI.Env[Y.version].modules, {
         ]
     },
     "tree-selectable": {
+        "requires": [
+            "tree"
+        ]
+    },
+    "tree-sortable": {
         "requires": [
             "tree"
         ]
@@ -2908,4 +2945,4 @@ Y.mix(YUI.Env[Y.version].modules, {
         ]
     }
 });
-YUI.Env[Y.version].md5 = '660f328e92276f36e9abfafb02169183';
+YUI.Env[Y.version].md5 = 'fd7c67956df50e445f40d1668dd1dc80';

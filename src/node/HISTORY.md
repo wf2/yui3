@@ -1,6 +1,53 @@
 Node Change History
 ===================
 
+3.12.0
+------
+
+* Fixed: Node instances that were cached before `node-pluginhost` was loaded
+  couldn't become plugin hosts. [Jeroen Versteeg]
+
+* Fixed: `Node#toggleView()` didn't show a node if that node's `hidden`
+  attribute wasn't set (this was a regression in 3.10.2). [Jeroen Versteeg]
+
+* Fixed: `Node#addMethod` could not bind to contexts other than itself. ([#1070][]: @zhiyelee)
+
+[#1070]: https://github.com/yui/yui3/issues/1070
+
+3.11.0
+------
+
+* Added: `Node#getHTML()` now works when used against document fragments. [Ezequiel Rodriguez]
+
+3.10.3
+------
+
+* No changes.
+
+3.10.2
+------
+
+* The `show()` and `hide()` methods now set and remove a node's `hidden`
+  attribute, which provides a semantic indication of hidden content and improves
+  accessibility. [Gerard Cohen]
+
+3.10.1
+------
+
+* No changes.
+
+3.10.0
+------
+
+* [!] Removed `node-deprecated` module. [Ryuichi Okumura]
+
+* Fix node.all() to return an empty NodeList if the node was destroyed - Fixes #580 (hat tip Dallas Wheeler)
+
+3.9.1
+-----
+
+* No changes.
+
 3.9.0
 -----
 

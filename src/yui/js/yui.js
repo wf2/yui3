@@ -1520,6 +1520,7 @@ Y.log('Fetching loader: ' + config.base + config.loaderPath, 'info', 'yui');
         YUI._getLoadHook = null;
     }
 
+    YUI.Env[VERSION] = {};
 }());
 
 
@@ -1975,6 +1976,22 @@ supported native console. This function is executed with the YUI instance as its
 **/
 
 /**
+The minimum log level to log messages for. Log levels are defined
+incrementally. Messages greater than or equal to the level specified will
+be shown. All others will be discarded. The order of log levels in
+increasing priority is:
+
+    debug
+    info
+    warn
+    error
+
+@property {String} logLevel
+@default 'debug'
+@since 3.10.0
+**/
+
+/**
 Callback to execute when `Y.error()` is called. It receives the error message
 and a JavaScript error object if one was provided.
 
@@ -2059,8 +2076,8 @@ relying on ES5 functionality, even when ES5 functionality is available.
 
 /**
 Delay the `use` callback until a specific event has passed (`load`, `domready`, `contentready` or `available`)
-@property delayUntil
-@type String|Object
+
+@property {Object|String} delayUntil
 @since 3.6.0
 @example
 
@@ -2084,6 +2101,4 @@ Or you can delay until a node is available (with `available` or `contentready`):
         // available in the DOM.
     });
 
-@property {Object|String} delayUntil
-@since 3.6.0
 **/

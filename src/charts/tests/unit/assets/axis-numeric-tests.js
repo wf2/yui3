@@ -4,16 +4,80 @@ YUI.add('axis-numeric-tests', function(Y) {
     }
     Y.extend(Y.NumericAxisTest, Y.ChartTestTemplate, {
         setUp: function() {
-            this.axis = new Y.NumericAxis({
-                dataProvider: this.dataProvider,
-                keys: this.dataKeys,
-                position: this.position,
-                roundingMethod: this.roundingMethod   
-            });
+            var position = this.position,
+                cfg = {
+                    dataProvider: this.dataProvider,
+                    keys: this.dataKeys,
+                    position: position,
+                    roundingMethod: this.roundingMethod   
+                };
+            if(position === "right" || position === "left") {
+                cfg.height = this.height;
+            } else {
+                cfg.width = this.width;
+            }
+            this.axis = new Y.NumericAxis(cfg);
         },
 
         tearDown: function() {
             this.axis = null;
+        },
+
+        _getDataFromLabelValues: function(startPoint, len, edgeOffset, layoutLength, direction, min, max, labelValues)
+        {
+            var points = [],
+                values = [],
+                labelValue,
+                i,
+                staticCoord,
+                dynamicCoord,
+                constantVal,
+                newPoint,
+                coord,
+                offset,
+                isVertical = direction === "vertical",
+                range = max - min,
+                scaleFactor = (layoutLength - (edgeOffset * 2)) / range,
+                increm = range/(len - 1);
+            if(isVertical)
+            {
+                staticCoord = "x";
+                dynamicCoord = "y";
+                offset = layoutLength - edgeOffset;
+            }
+            else
+            {
+                staticCoord = "y";
+                dynamicCoord = "x";
+                offset = edgeOffset;
+            }
+            constantVal = startPoint[staticCoord];
+            if(!labelValues) {
+                labelValues = [];
+                labelValue = min;
+                for(i = 0; i < len - 1; i = i + 1) {
+                    labelValues.push(labelValue);
+                    labelValue = labelValue + increm;
+                }
+                labelValues.push(max);
+            }
+            for(i = 0; i < len; i = i + 1)
+            {
+                labelValue = labelValues[i];
+                if(Y.Lang.isNumber(labelValue) && labelValue >= min && labelValue <= max)
+                {
+                    newPoint = {};
+                    newPoint[staticCoord] = constantVal;
+                    coord = (labelValue - min) * scaleFactor;
+                    newPoint[dynamicCoord] = isVertical ? offset - coord : offset + coord;
+                    points.push(newPoint);
+                    values.push(labelValue);
+                }
+            }
+            return {
+                points: points,
+                values: values
+            };
         },
 
         "test: _getLabelByIndex()" : function() {
@@ -99,6 +163,92 @@ YUI.add('axis-numeric-tests', function(Y) {
             } else {
                 Y.Assert.isFalse(axis._hasDataOverflow(), "The _hasDataOverflow should return false.");
             }
+        },
+
+        "test: _getLabelData()" : function() {
+            var axis = this.axis,
+                labelValues = [
+                    5,
+                    105,
+                    205,
+                    305,
+                    405
+                ],
+                len,
+                i,
+                layoutLength = axis.getLength(),
+                startPoint = axis.getFirstPoint(axis._layout.getLineStart.apply(axis)),
+                edgeOffset = 0,
+                position = this.position,
+                direction = position === "left" || position === "right" ? "vertical" : "horizontal",
+                axisLabelData,
+                testLabelData,
+                testPoints,
+                axisPoints,
+                testsValues,
+                axisValues,
+                axisPoint,
+                testPoint,
+                assertFn = function() {
+                    var min = axis.get("minimum"),
+                        max = axis.get("maximum"),
+                        staticCoord,
+                        dynamicCoord,
+                        constantVal;
+                    if(direction === "vertical") {
+                        staticCoord = "x";
+                        dynamicCoord = "y";
+                    } else {
+                        staticCoord = "y";
+                        dynamicCoord = "x";
+                    }
+                    constantVal = startPoint[staticCoord];
+                    axisLabelData = axis._getLabelData.apply(axis, [
+                        constantVal,
+                        staticCoord,
+                        dynamicCoord,
+                        min,
+                        max,
+                        edgeOffset,
+                        layoutLength - edgeOffset - edgeOffset,
+                        len,
+                        labelValues
+                    ]);
+                    testLabelData = this._getDataFromLabelValues(
+                        startPoint,
+                        len,
+                        edgeOffset,
+                        layoutLength,
+                        direction,
+                        min,
+                        max,
+                        labelValues
+                    );
+                    testPoints = testLabelData.points;
+                    testValues = testLabelData.values;
+                    axisPoints = axisLabelData.points;
+                    axisValues = axisLabelData.values;
+                    len = testPoints.length;
+                    for(i = 0; i < len; i = i + 1) {
+                        testPoint = testPoints[i];
+                        axisPoint = axisPoints[i];
+                        testValue = testValues[i];
+                        axisValue = axisValues[i];
+                        if(testPoint) {
+                            Y.Assert.areEqual(testPoint.x, axisPoint.x, "The x value for the " + i + " index of the axis points should be " + testPoint.x + "."); 
+                            Y.Assert.areEqual(testPoint.y, axisPoint.y, "The y value for the " + i + " index of the axis points should be " + testPoint.y + "."); 
+                        } else {
+                            Y.Assert.isNull(axisPoint, "There should not be a value for the axis point.");
+                        }
+                        if(testValue) {
+                            Y.Assert.areEqual(testValue, axisValue, "The label value for the " + i + " index should be " + testValue + ".");
+                        }
+                    }
+                };
+            assertFn.apply(this);
+            labelValues = null;
+            len = axis.getTotalMajorUnits();
+            assertFn.apply(this);
         }
     });
     
@@ -131,6 +281,7 @@ YUI.add('axis-numeric-tests', function(Y) {
     suite.add(new Y.NumericAxisTest({
         dataProvider: plainOldDataProvider,
         position: "left",
+		height: 400,
         dataKeys: ["open", "close"],
         roundingMethod: "niceNumber",
         name: "NumericAxis Tests, position=left, roundingMethod=niceNumber"
@@ -139,6 +290,7 @@ YUI.add('axis-numeric-tests', function(Y) {
     suite.add(new Y.NumericAxisTest({
         dataProvider: plainOldDataProvider,
         position: "top",
+		width: 700,
         dataKeys: ["open", "close"],
         roundingMethod: "niceNumber",
         name: "NumericAxis Tests, position=top, roundingMethod=niceNumber"
@@ -147,6 +299,7 @@ YUI.add('axis-numeric-tests', function(Y) {
     suite.add(new Y.NumericAxisTest({
         dataProvider: plainOldDataProvider,
         position: "right",
+		height: 400,
         dataKeys: ["open", "close"],
         roundingMethod: "niceNumber",
         name: "NumericAxis Tests, position=right, roundingMethod=niceNumber"
@@ -155,6 +308,7 @@ YUI.add('axis-numeric-tests', function(Y) {
     suite.add(new Y.NumericAxisTest({
         dataProvider: plainOldDataProvider,
         position: "bottom",
+		width: 700,
         dataKeys: ["open", "close"],
         roundingMethod: "niceNumber",
         name: "NumericAxis Tests, position=bottom, roundingMethod=niceNumber"
@@ -163,6 +317,7 @@ YUI.add('axis-numeric-tests', function(Y) {
     suite.add(new Y.NumericAxisTest({
         dataProvider: plainOldDataProvider,
         position: "left",
+		height: 400,
         dataKeys: ["open", "close"],
         roundingMethod: null,
         name: "NumericAxis Tests, position=left, roundingMethod=null"
@@ -171,6 +326,7 @@ YUI.add('axis-numeric-tests', function(Y) {
     suite.add(new Y.NumericAxisTest({
         dataProvider: plainOldDataProvider,
         position: "top",
+		width: 700,
         dataKeys: ["open", "close"],
         roundingMethod: null,
         name: "NumericAxis Tests, position=top, roundingMethod=null"
@@ -179,6 +335,7 @@ YUI.add('axis-numeric-tests', function(Y) {
     suite.add(new Y.NumericAxisTest({
         dataProvider: plainOldDataProvider,
         position: "right",
+		height: 400,
         dataKeys: ["open", "close"],
         roundingMethod: null,
         name: "NumericAxis Tests, position=right, roundingMethod=null"
@@ -187,6 +344,7 @@ YUI.add('axis-numeric-tests', function(Y) {
     suite.add(new Y.NumericAxisTest({
         dataProvider: plainOldDataProvider,
         position: "bottom",
+		width: 700,
         dataKeys: ["open", "close"],
         roundingMethod: null,
         name: "NumericAxis Tests, position=bottom, roundingMethod=null"
@@ -195,6 +353,7 @@ YUI.add('axis-numeric-tests', function(Y) {
     suite.add(new Y.NumericAxisTest({
         dataProvider: plainOldDataProvider,
         position: "left",
+		height: 400,
         dataKeys: ["open", "close"],
         roundingMethod: 1000000000,
         name: "NumericAxis Tests, position=left, roundingMethod=90"
@@ -203,6 +362,7 @@ YUI.add('axis-numeric-tests', function(Y) {
     suite.add(new Y.NumericAxisTest({
         dataProvider: plainOldDataProvider,
         position: "top",
+		width: 700,
         dataKeys: ["open", "close"],
         roundingMethod: 1000000000,
         name: "NumericAxis Tests, position=top, roundingMethod=90"
@@ -211,6 +371,7 @@ YUI.add('axis-numeric-tests', function(Y) {
     suite.add(new Y.NumericAxisTest({
         dataProvider: plainOldDataProvider,
         position: "right",
+		height: 400,
         dataKeys: ["open", "close"],
         roundingMethod: 1000000000,
         name: "NumericAxis Tests, position=right, roundingMethod=90"
@@ -219,6 +380,7 @@ YUI.add('axis-numeric-tests', function(Y) {
     suite.add(new Y.NumericAxisTest({
         dataProvider: plainOldDataProvider,
         position: "bottom",
+		width: 700,
         dataKeys: ["open", "close"],
         roundingMethod: 1000000000,
         name: "NumericAxis Tests, position=bottom, roundingMethod=90"
