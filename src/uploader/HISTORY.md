@@ -1,10 +1,12 @@
 Uploader Utility (New) Change History
 =====================================
 
-@VERSION@
+3.13.0
 ------
 
-* No changes.
+* Fixed typo with event `uploadcancel`. ([#1053][] @JetFault) [#1053]: https://github.com/yui/yui3/issues/1053
+* [!] #1154 Deprecate flash-uploader module.
+* Move all related swf and as files from yui3 repository to <a href="https://github.com/yui/yui3-swfs">yui3-swfs</a> repository.
 
 3.12.0
 ------

@@ -1,10 +1,11 @@
 SWF Utility Change History
 ==========================
 
-@VERSION@
+3.13.0
 ------
 
-* No changes.
+* [!] Deprecate module.
+* Move YUIBridge from yui3 repository to <a href="https://github.com/yui/yui3-swfs">yui3-swfs</a> repository.
 
 3.12.0
 ------

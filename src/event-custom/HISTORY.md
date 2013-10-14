@@ -1,10 +1,10 @@
 Custom Event Infrastructure Change History
 ==========================================
 
-@VERSION@
+3.13.0
 ------
 
-* No changes.
+* Made `addTarget` and `removeTarget` chainable.
 
 3.12.0
 ------
