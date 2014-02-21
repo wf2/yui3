@@ -1,6 +1,6 @@
 {
     "scrollview" : {
-    
+
         "plugins" : {
             "scrollview-base" : {
                 "requires" : [
@@ -9,6 +9,13 @@
                     "event-mousewheel",
                     "transition"
                 ],
+                "***BEGIN_WF2_CHANGE***": "Justification: In order to avoid extra HTTP for panel on mobile request, change needs to be done here because there is no other way",
+                "condition": {
+                    "trigger": "wf2-panel",
+                    "test": "wf2-panel-scrollview-test.js"
+                },
+                "before": ["wf2-panel"],
+                "***END_WF2_CHANGE***": "",
 
                 "skinnable": true
             },

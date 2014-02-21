@@ -7,7 +7,7 @@
                     "node-base",
                     "event-touch",
                     "event-synthetic"
-                ]   
+                ]
             },
 
             "event-move": {
@@ -15,7 +15,14 @@
                     "node-base",
                     "event-touch",
                     "event-synthetic"
-                ]   
+                ],
+                "***BEGIN_WF2_CHANGE***": "Justification: In order to avoid extra HTTP for panel on mobile request, change needs to be done here because there is no other way",
+                "condition": {
+                    "trigger": "wf2-panel",
+                    "ua": "touchEnabled"
+                },
+                "before": ["wf2-panel"],
+                "***END_WF2_CHANGE***": ""
             }
         }
     }
