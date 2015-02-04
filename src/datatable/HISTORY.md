@@ -1,6 +1,10 @@
 DataTable Change History
 ========================
 
+wf2-release-2.6.0
+-----
+* PN-7828 - DataTable non-sortable columns show tooltip, when `sortable` config is changed dynamically.
+
 3.18.1
 ------
 
