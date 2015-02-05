@@ -25,9 +25,9 @@ ButtonCore.prototype = {
      *
      * @property TEMPLATE
      * @type {String}
-     * @default <button/>
+     * @default <button></button>
      */
-    TEMPLATE: '<button/>',
+    TEMPLATE: '<button></button>',
 
     /**
      *
