@@ -799,7 +799,9 @@ Y.mix(Sortable.prototype, {
             } else {
                 node.removeClass(sortableClass)
                     .removeClass(ascClass)
-                    .removeClass(descClass);
+                    .removeClass(descClass)
+                    .removeAttribute('title')
+                    .removeAttribute('aria-labelledby');
 
                 if (liner) {
                     liner.replace(liner.get('childNodes').toFrag());
