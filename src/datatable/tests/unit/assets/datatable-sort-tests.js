@@ -210,6 +210,61 @@ suite.add(new Y.Test.Case({
 
         table.destroy();
 
+    },
+
+    "test sortable titles are toggled accordingly": function () {
+        var table = new Y.DataTable({
+                columns: [
+                    {
+                        key: 'a',
+                        title: 'Id'
+                    },
+                    {
+                        key: 'b',
+                        title: 'Name'
+                    },
+                    {
+                        key: 'c',
+                        title: 'Qty'
+                    }
+                ],
+                data: [{ a: 'd093982', b: 'Acme Dynamite Crate', c: 74}],
+                sortable: true
+            }),
+            colAHeader,
+            colBHeader;
+
+        table.render();
+
+        colAHeader = table.head.theadNode.one('th.yui3-datatable-col-a');
+        colBHeader = table.head.theadNode.one('th.yui3-datatable-col-b');
+        colCHeader = table.head.theadNode.one('th.yui3-datatable-col-c');
+
+        // sort a, rev sort b, leave c unsorted
+        table.set('sortBy', [{a: 1}, {b:-1}]);
+
+        // check default strings are using the column name (key)
+        Y.Assert.areSame('Reverse sort by a', colAHeader.get('title'));
+        Y.Assert.areSame('Sort by b', colBHeader.get('title'));
+        Y.Assert.areSame('Sort by c', colCHeader.get('title'));
+
+        // change sortable criteria
+        table.set('sortable', ['a', 'b']);
+
+        // check new titles
+        Y.Assert.areSame('Reverse sort by a', colAHeader.get('title'));
+        Y.Assert.areSame('Sort by b', colBHeader.get('title'));
+        Y.Assert.isFalse(colCHeader.hasAttribute('title'));
+
+        // change sortable criteria again
+        table.set('sortable', ['c']);
+        // check new titles
+        Y.Assert.isFalse(colAHeader.hasAttribute('title'));
+        Y.Assert.isFalse(colBHeader.hasAttribute('title'));
+        Y.Assert.areSame('Sort by c', colCHeader.get('title'));
+
+        table.destroy();
+
     }
 }));
 
