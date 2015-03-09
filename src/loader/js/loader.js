@@ -2824,7 +2824,11 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
                             maxURLLength = MAX_URL_LENGTH;
                         }
 
-                        if (frags.length) {
+                        //////////////////////////////////////////////////////////////////////
+                        //                  NOTE: WF2 CHANGE                                //
+                        //  ADD: baseLen > comboBase.length to avoid empty module request   //
+                        //////////////////////////////////////////////////////////////////////
+                        if (frags.length && (baseLen > comboBase.length)) {
                             if (baseLen > maxURLLength) {
                                 Y.log('Exceeded maxURLLength (' + maxURLLength + ') for ' + type + ', splitting', 'info', 'loader');
                                 fragSubset = [];
