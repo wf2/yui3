@@ -44,7 +44,7 @@
         META = { version: VERSION,
                           root: '',
                           base: WF2_BASE,
-                          combine: "@WF2_COMBINE@" === "true",
+                          combine: '@WF2_COMBINE@' === 'true',
                           comboBase: WF2_COMBO_BASE,
                           skin: { //defaultSkin: 'sam',
                                        //////////////////////
@@ -53,25 +53,32 @@
                                        // Temporary fix for PN-7736 - skin detection issue
                                        // between JSP and JS.
                                        defaultSkin: (function () {
-                                          var body = document.body,
-                                          bodyClass = body ? body.className : '',
-                                          hasNx = false,
-                                          hasNxt = false;
+                                          var
+                                            body,
+                                            bodyClass,
+                                            hasNx = false,
+                                            hasNxt = false;
 
-                                          if (/wf2\-skin\-nx\b/.test(bodyClass)) {
-                                            hasNx = true;
-                                          }
-                                          if (/wf2\-skin\-nxt\b/.test(bodyClass)) {
-                                            hasNxt = true;
-                                          }
-                                          if ((hasNx && !hasNxt) || (!hasNx && hasNxt)) {
-                                            // Only one wf2-skin-xxx class, it comes from JSP.
-                                            return hasNx? 'nx':'nxt';
-                                          }
-                                          if ((hasNx && hasNxt) || (!hasNx && !hasNxt)) {
-                                            // Either 2 classes are there or none. JSP didn't do
-                                            // anything here, we can safely detect the right one.
-                                            return Y.UA.touchEnabled ? 'nxt' : 'nx';
+                                          if (typeof document !== 'undefined') {
+                                            body = document.body;
+                                            bodyClass = body ? body.className : '';
+                                            if (/wf2\-skin\-nx\b/.test(bodyClass)) {
+                                              hasNx = true;
+                                            }
+                                            if (/wf2\-skin\-nxt\b/.test(bodyClass)) {
+                                              hasNxt = true;
+                                            }
+                                            if ((hasNx && !hasNxt) || (!hasNx && hasNxt)) {
+                                              // Only one wf2-skin-xxx class, it comes from JSP.
+                                              return hasNx? 'nx':'nxt';
+                                            }
+                                            if ((hasNx && hasNxt) || (!hasNx && !hasNxt)) {
+                                              // Either 2 classes are there or none. JSP didn't do
+                                              // anything here, we can safely detect the right one.
+                                              return Y.UA.touchEnabled ? 'nxt' : 'nx';
+                                            }
+                                          } else {
+                                            return 'nx';
                                           }
                                        })(),
                                        // defaultSkin: Y.UA.touchEnabled ? 'nxt' : 'nx',
