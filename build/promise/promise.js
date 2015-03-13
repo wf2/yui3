@@ -617,4 +617,4 @@ Y.batch = function () {
 };
 
 
-}, '@VERSION@', {"requires": ["timers"]});
+}, '3.18.1', {"requires": ["timers"]});
