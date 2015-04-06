@@ -470,6 +470,8 @@ Y.namespace('DataTable').BodyView = Y.Base.create('tableBody', Y.View, [], {
             len = colKeys.length,
             i;
 
+        if (!row) return;
+
         for (i = 0; i < len; i++) {
             col = this.getColumn(colKeys[i]);
 
