@@ -81,6 +81,9 @@
     Y.Anim.DEFAULT_UNIT = 'px';
 
     Y.Anim.DEFAULT_EASING = function (t, b, c, d) {
+        if (!d) {
+            c + b;
+        }
         return c * t / d + b; // linear easing
     };
 
