@@ -96,7 +96,6 @@ var Easing = {
      * @return {Number} The computed value for the current animation frame
      */
     easeBoth: function (t, b, c, d) {
-        // value return increases from beginning until half the duration has passed, then decreases to 0
         if (!d) {
             return c + b;
         }
@@ -358,7 +357,7 @@ var Easing = {
      */
     bounceIn: function (t, b, c, d) {
         if (!d) {
-            return 0; // c - (c+b) + b
+            return 0;
         }
         return c - Y.Easing.bounceOut(d-t, 0, c, d) + b;
     },
