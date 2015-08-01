@@ -48,6 +48,9 @@ var Easing = {
      * @return {Number} The computed value for the current animation frame
      */
     easeNone: function (t, b, c, d) {
+        if (!d) {
+            return c + b;
+        }
         return c*t/d + b;
     },
 
@@ -61,6 +64,9 @@ var Easing = {
      * @return {Number} The computed value for the current animation frame
      */
     easeIn: function (t, b, c, d) {
+        if (!d) {
+            return c + b;
+        }
         return c*(t/=d)*t + b;
     },
 
@@ -74,6 +80,9 @@ var Easing = {
      * @return {Number} The computed value for the current animation frame
      */
     easeOut: function (t, b, c, d) {
+        if (!d) {
+            return c + b;
+        }
         return -c *(t/=d)*(t-2) + b;
     },
 
@@ -87,6 +96,9 @@ var Easing = {
      * @return {Number} The computed value for the current animation frame
      */
     easeBoth: function (t, b, c, d) {
+        if (!d) {
+            return c + b;
+        }
         if ((t /= d/2) < 1) {
             return c/2*t*t + b;
         }
@@ -104,6 +116,9 @@ var Easing = {
      * @return {Number} The computed value for the current animation frame
      */
     easeInStrong: function (t, b, c, d) {
+        if (!d) {
+            return c + b;
+        }
         return c*(t/=d)*t*t*t + b;
     },
 
@@ -117,6 +132,9 @@ var Easing = {
      * @return {Number} The computed value for the current animation frame
      */
     easeOutStrong: function (t, b, c, d) {
+        if (!d) {
+            return c + b;
+        }
         return -c * ((t=t/d-1)*t*t*t - 1) + b;
     },
 
@@ -130,6 +148,9 @@ var Easing = {
      * @return {Number} The computed value for the current animation frame
      */
     easeBothStrong: function (t, b, c, d) {
+        if (!d) {
+            return c + b;
+        }
         if ((t /= d/2) < 1) {
             return c/2*t*t*t*t + b;
         }
@@ -151,6 +172,9 @@ var Easing = {
 
     elasticIn: function (t, b, c, d, a, p) {
         var s;
+        if (!d) {
+            return b+c;
+        }
         if (t === 0) {
             return b;
         }
@@ -185,6 +209,9 @@ var Easing = {
      */
     elasticOut: function (t, b, c, d, a, p) {
         var s;
+        if (!d) {
+            return b+c;
+        }
         if (t === 0) {
             return b;
         }
@@ -219,6 +246,9 @@ var Easing = {
      */
     elasticBoth: function (t, b, c, d, a, p) {
         var s;
+        if (!d) {
+            return b+c;
+        }
         if (t === 0) {
             return b;
         }
@@ -259,6 +289,9 @@ var Easing = {
      * @return {Number} The computed value for the current animation frame
      */
     backIn: function (t, b, c, d, s) {
+        if (!d) {
+            return c + b;
+        }
         if (s === undefined) {
             s = 1.70158;
         }
@@ -279,6 +312,9 @@ var Easing = {
      * @return {Number} The computed value for the current animation frame
      */
     backOut: function (t, b, c, d, s) {
+        if (!d) {
+            return c + b;
+        }
         if (typeof s === 'undefined') {
             s = 1.70158;
         }
@@ -297,6 +333,9 @@ var Easing = {
      * @return {Number} The computed value for the current animation frame
      */
     backBoth: function (t, b, c, d, s) {
+        if (!d) {
+            return c + b;
+        }
         if (typeof s === 'undefined') {
             s = 1.70158;
         }
@@ -317,6 +356,9 @@ var Easing = {
      * @return {Number} The computed value for the current animation frame
      */
     bounceIn: function (t, b, c, d) {
+        if (!d) {
+            return 0;
+        }
         return c - Y.Easing.bounceOut(d-t, 0, c, d) + b;
     },
 
@@ -330,6 +372,9 @@ var Easing = {
      * @return {Number} The computed value for the current animation frame
      */
     bounceOut: function (t, b, c, d) {
+        if (!d) {
+            return c + b;
+        }
         if ((t/=d) < (1/2.75)) {
                 return c*(7.5625*t*t) + b;
         } else if (t < (2/2.75)) {
@@ -350,6 +395,9 @@ var Easing = {
      * @return {Number} The computed value for the current animation frame
      */
     bounceBoth: function (t, b, c, d) {
+        if (!d) {
+            return c + b;
+        }
         if (t < d/2) {
             return Y.Easing.bounceIn(t * 2, 0, c, d) * 0.5 + b;
         }
