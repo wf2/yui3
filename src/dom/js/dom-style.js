@@ -117,10 +117,12 @@ Y.mix(Y_DOM, {
      * @param {Object} hash An object literal of property:value pairs.
      */
     setStyles: function(node, hash) {
-        var style = node.style;
-        Y.each(hash, function(v, n) {
-            Y_DOM.setStyle(node, n, v, style);
-        }, Y_DOM);
+        if (node) {
+            var style = node.style;
+            Y.each(hash, function(v, n) {
+                Y_DOM.setStyle(node, n, v, style);
+            }, Y_DOM);
+        }
     },
 
     /**
